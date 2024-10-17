@@ -1,26 +1,36 @@
-const User = require("../models/user.model");
+import { Request, Response } from "express";
+// import User from "../models/user.model";
+import User from "../models/user.model";
 
-exports.getAllUsers = async (req, res) => {
+// Get all users
+export const getAllUsers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const user = await User.find();
+    const users = await User.find();
     res.status(201).json({
       status: "Success",
-      results: user.length,
+      results: users.length,
       data: {
-        user,
+        users,
       },
     });
   } catch (err) {
     res.status(400).json({
       status: "failed",
-
       Message: {
         Error: "could not find your req" + err,
       },
     });
   }
 };
-exports.createUser = async (req, res) => {
+
+// Create a new user
+export const createUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   console.log("request ....", req.body.name);
 
   try {
@@ -45,7 +55,9 @@ exports.createUser = async (req, res) => {
     });
   }
 };
-exports.getUser = async (req, res) => {
+
+// Get a single user
+export const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await User.findById(req.params.id);
     res.status(200).json({
@@ -63,13 +75,16 @@ exports.getUser = async (req, res) => {
   }
 };
 
-exports.udateUser = (req, res) => {
+// Update a user (Not implemented)
+export const updateUser = (req: Request, res: Response): void => {
   res.status(500).json({
     status: "error",
     message: "this route is not yet defined",
   });
 };
-exports.deleteUser = (req, res) => {
+
+// Delete a user (Not implemented)
+export const deleteUser = (req: Request, res: Response): void => {
   res.status(500).json({
     status: "error",
     message: "this route is not yet defined",
