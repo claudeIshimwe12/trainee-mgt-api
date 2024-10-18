@@ -6,7 +6,7 @@ import dotenv from "dotenv"; // Import dotenv for loading environment variables
 dotenv.config();
 
 // Ensure that the MongoDB connection string exists and is of type string
-const dbConnectionString: string | undefined = process.env.LOCAL_DB;
+const dbConnectionString: string | undefined = process.env.ATLAS_CON_STRING;
 
 if (!dbConnectionString) {
   console.error(
