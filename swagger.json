@@ -1,0 +1,304 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "description": "A simple api for authentication and User management",
+    "title": "TRM"
+  },
+  "servers": [
+    {
+      "url": "https://trainee-mgt-api.onrender.com/api/v1",
+      "description": "hosted server"
+    }
+  ],
+
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "To authenticate, include a valid JWT token in the Authorization header using the Bearer scheme. Contact the API administrator to obtain a token."
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "The specified resource was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Resource not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Bad Request"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Access token is missing or invalid"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Forbidden"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ConflictError": {
+        "description": "Resource exists",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Resource exists"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Validation error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "UserLogin": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "your email",
+            "example": "example1@email.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "your password",
+            "example": "password123??"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User Endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "User actions"
+    }
+  ],
+  "schemes": ["http", "https"],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "description": "User login",
+        "requestBody": {
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "You logged in successfully!"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "description": "Find all users in the system.",
+        "responses": {
+          "200": {
+            "description": "Users retrieved successfully!"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "User by Id",
+        "description": "Get single user based on id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "65d1d9379f46680630b65fd0"
+            },
+            "description": "User Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user found."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/users/{Id}": {
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete user",
+        "description": "Delete user based on user id.",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "65d1e42fcf8e7ad4a9g38901"
+            },
+            "description": "User Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfull!"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/users/{iD}": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "description": "Update user based on user id.",
+        "parameters": [
+          {
+            "name": "iD",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "65d1e42fcf8e7ad4a9g38901"
+            },
+            "description": "User Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfull!"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  }
+}

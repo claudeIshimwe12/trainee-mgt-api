@@ -62,17 +62,22 @@ export const protect = async (
 
     if (!token) {
       return res.status(401).json({
-        Status: "Login First",
+        status: "Fail",
+        statusCode: 401,
+        message: "Please log in first",
       });
     }
 
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
     const freshUser = await User.findOne({ _id: decoded.id });
-    // req.user = freshUser;
-    next();
+    if (freshUser) {
+      next();
+    }
   } catch (error) {
     res.status(403).json({
-      Status: "Invalid Token",
+      status: "Fail",
+      statusCode: 403,
+      message: "Invalid Token",
     });
   }
 };
