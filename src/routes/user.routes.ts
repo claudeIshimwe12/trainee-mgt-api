@@ -8,6 +8,7 @@ const usersRouter = express.Router();
 usersRouter
   .get("/users", authControllers.protect, usersControllers.getAllUsers)
   .post("/users", usersControllers.createUser)
-  .get("/users/:id", usersControllers.getUser);
+  .get("/users/:id", usersControllers.getUser)
+  .get("/auth/me", authControllers.getMe);
 
 export default usersRouter;

@@ -299,6 +299,37 @@
           }
         }
       }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["Authenticated User"],
+        "summary": "Auth User",
+        "description": "Get Authenticated User",
+        "responses": {
+          "200": {
+            "status": "Success",
+            "statusCode": 200,
+            "message": "Authorized user found",
+            "data": {
+              "freshUser": {
+                "_id": "670f999835fca7db6bb49ab4",
+                "name": "jack",
+                "email": "jack@trst.com",
+                "role": "trainee",
+                "__v": 0
+              }
+            }
+          },
+          "403": {
+            "status": "Fail",
+            "statusCode": 403,
+            "message": "Invalid token"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
     }
   }
 }

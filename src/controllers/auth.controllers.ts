@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/user.model";
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -34,13 +34,16 @@ export const login = async (
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
-    expiresIn: "2m",
+    expiresIn: "2h",
   });
 
   res.status(200).json({
     Status: "Success",
-    user_id: user.email,
-    token,
+    message: "Log In Successful",
+    data: {
+      user_id: user.id,
+      token,
+    },
   });
 };
 
@@ -59,7 +62,6 @@ export const protect = async (
     ) {
       token = req.headers.authorization.split(" ")[1];
     }
-
     if (!token) {
       return res.status(401).json({
         status: "Fail",
@@ -68,16 +70,72 @@ export const protect = async (
       });
     }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
-    const freshUser = await User.findOne({ _id: decoded.id });
-    if (freshUser) {
-      next();
-    }
+    let decodedToken: any;
+    jwt.verify(
+      token,
+      process.env.JWT_SECRET as string,
+      function (err, decoded) {
+        decodedToken = decoded;
+      }
+    );
+    const freshUser = await User.findOne({ _id: decodedToken.id });
+
+    next();
   } catch (error) {
     res.status(403).json({
       status: "Fail",
       statusCode: 403,
       message: "Invalid Token",
+    });
+  }
+};
+
+// Get Authorized User
+
+export const getMe = async (req: Request, res: Response): Promise<any> => {
+  try {
+    let token: string | undefined;
+    if (req.headers.authorization) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      return res.status(401).json({
+        status: "Fail",
+        statusCode: 401,
+        message: "Please log in first",
+      });
+    }
+    let decodedToken: any;
+
+    jwt.verify(
+      token,
+      process.env.JWT_SECRET as string,
+      function (err, decoded) {
+        if (err) {
+          throw new Error("Invalid token");
+        }
+        decodedToken = decoded;
+      }
+    );
+
+    const freshUser = await User.findOne({ _id: decodedToken.id });
+
+    if (freshUser) {
+      res.status(200).json({
+        status: "Success",
+        statusCode: 200,
+        message: "Authorized user found",
+        data: {
+          freshUser,
+        },
+      });
+    }
+  } catch (error) {
+    res.status(403).json({
+      status: "Fail",
+      statusCode: 403,
+      message: "Invalid token",
     });
   }
 };

@@ -31,8 +31,6 @@ export const createUser = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  console.log("request ....", req.body.name);
-
   try {
     const newUser = await User.create({
       name: req.body.name,
